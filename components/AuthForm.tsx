@@ -23,6 +23,7 @@ import { authFormSchema } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { getLoggedInUser, signIn, signUp } from "@/lib/actions/user.action";
+import PlaidLink from "./PlaidLink";
 
 
 const AuthForm = ({ type }: { type: string }) => {
@@ -47,10 +48,24 @@ const AuthForm = ({ type }: { type: string }) => {
     setIsLoading(true);
 
     try {
-      //sign up with Appwrite & create plaid link token
+      //Sign up with Appwrite & create plaid link token
+
 
       if (type === "sign-up") {
-        const newUser = await signUp(data);
+const userData = {
+  firstName: data.firstName!,
+  lastName: data.lastName!,
+  address1: data.address1!,
+  city: data.city!,
+  state: data.state!,
+  postalCode: data.postalCode!,
+  dateOfBirth: data.dateOfBirth!,
+  ssn: data.ssn!,
+  email: data.email,
+  password: data.password
+}
+
+        const newUser = await signUp(userData);
 
         setUser(newUser);
       }
@@ -99,8 +114,11 @@ const AuthForm = ({ type }: { type: string }) => {
         </div>
       </header>
       {user ? (
-        <div className="flex flex-col gap-4">{/* {PlaidLink} */}</div>
-      ) : (
+        <div className="flex flex-col gap-4">
+         <PlaidLink  user={user} variant="primary"/>
+          
+          </div>
+     ) : ( 
         <>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -111,14 +129,14 @@ const AuthForm = ({ type }: { type: string }) => {
                       control={form.control}
                       name="firstName"
                       label="First Name"
-                      placeholder="ex: Jose"
+                      placeholder="Jose"
                     />
 
                     <CustomInput
                       control={form.control}
                       name="lastName"
                       label="Last Name"
-                      placeholder="ex: Andres"
+                      placeholder="Andres"
                     />
                   </div>
 
@@ -133,21 +151,21 @@ const AuthForm = ({ type }: { type: string }) => {
                       control={form.control}
                       name="city"
                       label="City"
-                      placeholder="ex: Ikeja"
+                      placeholder="Enter your city"
                     />
 
                     <CustomInput
                       control={form.control}
                       name="state"
                       label="State"
-                      placeholder="ex: Lagos"
+                      placeholder="Lagos"
                     />
 
                     <CustomInput
                       control={form.control}
                       name="postalCode"
                       label="Postal Code"
-                      placeholder="ex: 00000"
+                      placeholder="00000"
                     />
                   </div>
                   <div className="flex gap-4">
@@ -160,9 +178,9 @@ const AuthForm = ({ type }: { type: string }) => {
 
                     <CustomInput
                       control={form.control}
-                      name="phone"
-                      label="Phone Number"
-                      placeholder="ex: 234800000"
+                      name="ssn"
+                      label="SSN"
+                      placeholder="234800000"
                     />
                   </div>
                 </>
@@ -208,7 +226,7 @@ const AuthForm = ({ type }: { type: string }) => {
               href={type === "sign-in" ? "/sign-up" : "/sign-in"}
               className="form-link"
             >
-              {type === "sign-in" ? "Create new account" : "Sign in"}
+              {type === "sign-in" ? "Create an account" : "Sign in"}
             </Link>
           </footer>
         </>
